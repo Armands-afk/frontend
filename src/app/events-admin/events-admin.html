@@ -1,0 +1,141 @@
+<div class="admin-bg">
+<!-- Admin navbar jauzliek admina nav bars jaatrod ikonas vai kaut ko 
+ admin paneli vajag pacekot ka nomainit ar admin paneli pogu...japamekle ka metodi uztaisit-->
+<nav class="navbar navbar-dark bg-dark px-3 mb-4">
+  <span class="navbar-brand fw-bold">🛠️ Admin panelis — Pasākumi</span>
+  <div class="d-flex gap-2">
+    <button class="btn btn-outline-light btn-sm" type="button" (click)="goToEvents()">← Atpakaļ uz pasākumiem</button>
+  </div>
+</nav>
+
+<div class="container pb-5">
+
+  <!-- Create event toggle...seit man bus tekts virls pasakumu kartinam liksu kreisaja puse laikam
+  AIZVERT/IZVEIDOT PASAKUMU poga mainas un darbojas kods gan divains...-->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Pasākumu pārvaldība</h2>
+    <button class="btn btn-primary" type="button" (click)="toggleCreateForm()">
+      {{ showCreateForm() ? '✕ Aizvērt' : '+ Izveidot pasākumu' }} 
+    </button>
+  </div>
+
+  <!-- Create event form 
+   atgadinajums man jasaliek viss labak seciba ka man bus web lapā...lai vieglak orienteties-->
+  @if (showCreateForm()) {
+    <div class="card mb-4 border-primary shadow-sm">
+      <div class="card-header bg-primary text-white fw-semibold">Jauna pasākuma izveide</div>
+      <div class="card-body">
+        <div class="row g-3">
+
+          <div class="col-12 col-md-6">
+            <label class="form-label">Nosaukums <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" placeholder="Pasākuma nosaukums"
+              [formField]="newEventForm.nosaukums" />
+            <app-error-validation [fieldValid]="newEventForm.nosaukums()" />
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label class="form-label">Vieta <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" placeholder="Vieta, adrese"
+              [formField]="newEventForm.vieta" />
+            <app-error-validation [fieldValid]="newEventForm.vieta()" />
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Apraksts <span class="text-danger">*</span></label>
+            <textarea class="form-control" rows="3" placeholder="Aprakstiet pasākumu..."
+              [formField]="newEventForm.apraksts"></textarea>
+            <app-error-validation [fieldValid]="newEventForm.apraksts()" />
+          </div>
+
+          <div class="col-12 col-md-4">
+            <label class="form-label">Datums <span class="text-danger">*</span></label>
+            <input type="date" class="form-control"
+              [formField]="newEventForm.datums" />
+            <app-error-validation [fieldValid]="newEventForm.datums()" />
+          </div>
+
+          <div class="col-12 col-md-4">
+            <label class="form-label">Laiks <span class="text-danger">*</span></label>
+            <input type="time" class="form-control" [formField]="newEventForm.laiks" />
+            <app-error-validation [fieldValid]="newEventForm.laiks()" />
+          </div>
+
+          <div class="col-12 col-md-4">
+            <label class="form-label">Maks. dalībnieku skaits <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" placeholder="50"
+              [formField]="newEventForm.maxDalibnieki" />
+            <app-error-validation [fieldValid]="newEventForm.maxDalibnieki()" />
+          </div>
+
+        </div>
+
+        <div class="mt-3 text-end">
+          <button type="button" class="btn btn-success" (click)="createEvent()">
+            Saglabāt pasākumu
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Events lists adminam...paradis man textu ja neviena lauka nebus... -->
+  @if (allEvents().length === 0) {
+    <div class="text-center text-muted py-5">
+      <p class="fs-5">Nav neviena pasākuma. Izveidojiet pirmo!</p>
+    </div>
+  }
+
+  <div class="row g-4">
+    @for (event of allEvents(); track event.id) {
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="card h-100 shadow-sm" [class.border-danger]="isFull(event)">
+
+          <div class="card-header d-flex justify-content-between align-items-start">
+            <h6 class="mb-0 fw-bold">{{ event.nosaukums }}</h6>
+            @if (isFull(event)) {
+              <span class="badge bg-danger ms-2 text-nowrap">Pilns</span>
+            } @else {
+              <span class="badge bg-success ms-2 text-nowrap">Brīvs</span>
+            }
+          </div>
+
+          <div class="card-body d-flex flex-column">
+            <p class="text-muted small mb-3">{{ event.apraksts }}</p>
+
+            <ul class="list-unstyled small mb-3">
+              <li><strong>📅 Datums:</strong> {{ event.datums }}</li>
+              <li><strong>🕐 Laiks:</strong> {{ event.laiks }}</li>
+              <li><strong>📍 Vieta:</strong> {{ event.vieta }}</li>
+            </ul>
+
+            <div class="mb-3">
+              <div class="d-flex justify-content-between small mb-1">
+                <span>Dalībnieki</span>
+                <span>{{ event.pieteikumuSkaits }} / {{ event.maxDalibnieki }}</span>
+              </div>
+              <div style="height: 8px; background-color: #e9ecef; border-radius: 4px; overflow: hidden;">
+                <div
+                  [class.bg-danger]="isFull(event)"
+                  [class.bg-success]="!isFull(event)"
+                  [style.width.%]="(event.pieteikumuSkaits / event.maxDalibnieki) * 100"
+                  style="height: 100%;">
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-auto">
+              <button type="button" class="btn btn-danger w-100"
+                (click)="deleteEvent(event.id!)">
+                🗑️ Dzēst pasākumu
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    }
+  </div>
+
+</div>
+</div>

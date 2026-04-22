@@ -1,0 +1,61 @@
+<div class="eventBackground d-flex align-items-center">
+  <div class="container">
+  <div class="row justify-content-center w-100">
+    <div class="col-12 col-sm-10 col-md-8 col-lg-5">
+      <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white text-center py-4">
+          <h1 class="h3 mb-0">📅 Pasākumu Aplikācija</h1>
+        </div>
+        <div class="card-body p-4">
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">E-pasts:</label>
+            <input class="form-control" type="text" placeholder="jusu@epasts.lv"
+              [formField]="fromMain().email" />
+            <app-error-validation [fieldValid]="fromMain().email()" />
+          </div>
+
+          @if (show() === false) {
+            <button class="btn btn-primary w-100" type="button" (click)="onEmailInput()">
+              Turpināt
+            </button>
+          }
+
+          @if (show() === true) {
+            <div class="mt-3 mb-3">
+              <label class="form-label fw-semibold">Parole:</label>
+              <input class="form-control" type="password" placeholder="Ievadiet paroli"
+                [formField]="fromMain().password" />
+              <app-error-validation [fieldValid]="fromMain().password()" />
+            </div>
+
+            @if (!isRegistered()) {
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Atkārtojiet paroli:</label>
+                <input class="form-control" type="password" placeholder="Atkārtojiet paroli"
+                  [formField]="fromMain().confirmPassword" />
+                <app-error-validation [fieldValid]="fromMain().confirmPassword()" />
+              </div>
+            }
+
+            @if (isRegistered() === true) {
+              <button class="btn btn-primary w-100 mt-2" type="button" (click)="onSignIn()">
+                Pieslēgties
+              </button>
+            }
+            @if (isRegistered() === false) {
+              <button class="btn btn-success w-100 mt-2" type="button" (click)="saveUser()">
+                Reģistrēties
+              </button>
+            }
+          }
+
+        </div>
+        <div class="card-footer text-center text-muted small py-3">
+          Ievadiet savu e-pastu, lai pieslēgtos vai reģistrētos.
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>

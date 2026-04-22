@@ -1,0 +1,10 @@
+<!-- jaapskatas velreiz ka mes bmw taisijam velak  -->
+
+<div>
+    @if(fieldValid().invalid() && fieldValid().touched()){
+    @for (err of fieldValid().errors(); track err) {
+    <p style="color:red">{{err.message}}</p>
+    }
+    }
+</div>
+

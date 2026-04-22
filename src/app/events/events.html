@@ -1,0 +1,108 @@
+﻿<div class="events-bg">
+<!-- Navigation bar kur ja ielogojos kā Admins tad tieku klāt admin panelim -->
+<nav class="navbar navbar-dark bg-dark px-3 mb-4">
+  <span class="navbar-brand fw-bold">📅 Pasākumu Aplikācija</span>
+  <div class="d-flex align-items-center gap-3">
+    <span class="text-white small">{{ userEmail }}</span>
+    @if (isAdmin) {
+      <button class="btn btn-warning btn-sm" type="button" (click)="goToAdmin()">Admin panelis</button>
+    }
+    <button class="btn btn-outline-light btn-sm" type="button" (click)="logout()">Iziet</button>
+  </div>
+</nav>
+
+<div class="container pb-5">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Visi pasākumi</h2>
+  </div>
+
+  <!-- te vienkarsi salidzinu ja nav pasakumu kur id 0 tad paradu nav neviena pasakuma -->
+  @if (allEvents().length === 0) {
+    <div class="text-center text-muted py-5">
+      <p class="fs-5">Nav neviena pasākuma.</p>
+    </div>
+  }
+
+  <div class="row g-4">
+    @for (event of allEvents(); track event.id) {
+      <div class="col-12 col-sm-6 col-lg-4">
+        <div class="card h-100 shadow-sm"
+          [class.border-secondary]="isPast(event)"
+          [class.border-danger]="!isPast(event) && isFull(event) && !isRegistered(event.id!)"
+          [class.border-success]="!isPast(event) && isRegistered(event.id!)">
+
+          <!-- Card header with status badge -->
+          <div class="card-header d-flex justify-content-between align-items-start">
+            <h6 class="mb-0 fw-bold">{{ event.nosaukums }}</h6>
+            @if (isPast(event)) {
+              <span class="badge bg-secondary ms-2 text-nowrap">Beidzies</span>
+            } @else if (isRegistered(event.id!)) {
+              <span class="badge bg-success ms-2 text-nowrap">✓ Pieteicies</span>
+            } @else if (isFull(event)) {
+              <span class="badge bg-danger ms-2 text-nowrap">Pilns</span>
+            } @else {
+              <span class="badge bg-primary ms-2 text-nowrap">Brīvs</span>
+            }
+          </div>
+
+          <!-- Card body -->
+          <div class="card-body d-flex flex-column">
+            <p class="text-muted small mb-3">{{ event.apraksts }}</p>
+
+            <ul class="list-unstyled small mb-3">
+              <li><strong>📅 Datums:</strong> {{ event.datums }}</li>
+              <li><strong>🕐 Laiks:</strong> {{ event.laiks }}</li>
+              <li><strong>📍 Vieta:</strong> {{ event.vieta }}</li>
+            </ul>
+
+            <!-- Participation progress bar -->
+            <div class="mb-3">
+              <div class="d-flex justify-content-between small mb-1">
+                <span>Dalībnieki</span>
+                <span>{{ event.pieteikumuSkaits }} / {{ event.maxDalibnieki }}</span>
+              </div>
+              <div style="height: 8px; background-color: #e9ecef; border-radius: 4px; overflow: hidden;">
+                <div
+                  [class.bg-danger]="isFull(event)"
+                  [class.bg-success]="!isFull(event)"
+                  [style.width.%]="(event.pieteikumuSkaits / event.maxDalibnieki) * 100"
+                  style="height: 100%;">
+                </div>
+              </div>
+            </div>
+
+            <!-- Action buttons — hidden for admin (admin manages from admin panel) -->
+            @if (!isAdmin) {
+              <div class="mt-auto">
+                @if (isPast(event)) {
+                  <button type="button" class="btn btn-outline-secondary w-100" disabled>
+                    Pasākums beidzies
+                  </button>
+                } @else if (isRegistered(event.id!)) {
+                  <button type="button" class="btn btn-outline-danger w-100"
+                    (click)="cancel(event.id!)">
+                    Atcelt dalību
+                  </button>
+                } @else if (!isFull(event)) {
+                  <button type="button" class="btn btn-outline-success w-100"
+                    (click)="register(event.id!)">
+                    Pieteikties
+                  </button>
+                } @else {
+                  <button type="button" class="btn btn-outline-secondary w-100" disabled>
+                    Pasākums ir pilns
+                  </button>
+                }
+              </div>
+            }
+
+          </div>
+
+        </div>
+      </div>
+    }
+  </div>
+
+</div>
+</div>

@@ -1,0 +1,18 @@
+.events-bg {
+  min-height: 100vh;
+  background-image: url('/theatreUser.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Subtle hover effect on event cards */
+.card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+/* Keep cards aligned in grid */
+.card {
+  transition: transform 0.2s ease;
+}

@@ -1,0 +1,20 @@
+/* šeit es vienkārši admin paneļa sekcijā ielieku background bildi ar ato stilu lai bilde man 
+nav ar nogrieztiem stūriem */
+
+.admin-bg {
+  min-height: 100vh;
+  background-image: url('/theatreAdmin.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+
+.card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+.card {
+  transition: transform 0.2s ease;
+}
